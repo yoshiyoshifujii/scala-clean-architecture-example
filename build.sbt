@@ -2,6 +2,15 @@ import Settings._
 
 val baseName = "scala-clean-architecture-example"
 
+lazy val `infrastructure` = (project in file("modules/infrastructure"))
+  .settings(
+    name := s"$baseName-infrastructure",
+    libraryDependencies ++= Seq(
+      Passay.passay
+    )
+  )
+  .settings(coreSettings)
+
 lazy val `entities` = (project in file("modules/entities"))
   .settings(
     name := s"$baseName-entities",
@@ -10,6 +19,7 @@ lazy val `entities` = (project in file("modules/entities"))
     )
   )
   .settings(coreSettings)
+  .dependsOn(infrastructure)
 
 lazy val `usecases` = (project in file("modules/usecases"))
   .settings(

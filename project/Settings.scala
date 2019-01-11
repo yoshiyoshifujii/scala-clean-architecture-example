@@ -29,8 +29,8 @@ object Settings {
     scalafmtOnCompile in ThisBuild := true,
     scalafmtTestOnCompile in ThisBuild := true,
     resolvers ++= Seq(
-      "Sonatype OSS Snapshot Repository" at "https://oss.sonatype.org/content/repositories/snapshots/",
-      "Sonatype OSS Release Repository" at "https://oss.sonatype.org/content/repositories/releases/",
+      "Sonatype OSS Snapshot Repository" at "https://oss.sonatype.org/content/gateway.repositories/snapshots/",
+      "Sonatype OSS Release Repository" at "https://oss.sonatype.org/content/gateway.repositories/releases/",
       "Seasar2 Repository" at "http://maven.seasar.org/maven2",
       Resolver.bintrayRepo("danslapman", "maven")
     ),

@@ -20,3 +20,18 @@ case class Client(id: ClientId,
   override type IdType        = ClientId
   override protected val tag: ClassTag[Client] = classTag[Client]
 }
+
+object Client {
+
+  def create[M[_]](
+      id: M[ClientId],
+      status: Status,
+      name: Option[String],
+      secret: Secret,
+      redirectUris: NonEmptyList[String],
+      scopes: Scopes,
+      createdAt: ZonedDateTime,
+      updatedAt: Option[ZonedDateTime]
+  ): M[Client] =
+
+}

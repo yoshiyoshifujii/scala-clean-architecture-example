@@ -1,8 +1,9 @@
 package adapters.presenters
 
-import usecases.outputs.OutputBoundary
 
-import scala.concurrent.{ ExecutionContext, Future, Promise }
+import usecases.OutputBoundary
+
+import scala.concurrent.{ExecutionContext, Future, Promise}
 
 trait Presenter[OutputData] extends OutputBoundary[OutputData] {
 
