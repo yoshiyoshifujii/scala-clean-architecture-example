@@ -1,27 +1,37 @@
 package adapters.presenters
 
-
+import cats.data.NonEmptyList
+import cats.data.Validated.{ Invalid, Valid }
+import cats.syntax.either._
+import entities.{ EntitiesError, ValidationResult }
 import usecases.OutputBoundary
 
-import scala.concurrent.{ExecutionContext, Future, Promise}
+import scala.concurrent.{ ExecutionContext, Future, Promise }
+import scala.util.{ Failure, Success }
 
-trait Presenter[OutputData] extends OutputBoundary[OutputData] {
+trait Presenter[OutputData] extends OutputBoundary[Future, OutputData] {
 
-  private val promise: Promise[OutputData] = Promise[OutputData]
+  implicit val executionContext: ExecutionContext
 
-  override def onSuccess(result: OutputData): Unit = {
-    promise.success(result)
-  }
+  private val promise: Promise[ValidationResult[OutputData]] = Promise[ValidationResult[OutputData]]
 
-  override def onFailure(tw: Throwable): Unit = {
-    promise.failure(tw)
-  }
+  override def onComplete(result: Future[ValidationResult[OutputData]]): Unit =
+    result.onComplete({
+      case Failure(cause) => promise.failure(cause)
+      case Success(value) => promise.success(value)
+    })
 
-  type Response
+  type ViewModel
+  type ErrorResponse
+  type Response = Either[ErrorResponse, ViewModel]
 
-  protected def convert(result: OutputData): Response
+  protected def convert(result: OutputData): ViewModel
+  protected def convertError(result: NonEmptyList[EntitiesError]): ErrorResponse
 
-  def response()(implicit ec: ExecutionContext): Future[Response] =
-    promise.future.map(convert)
+  def response(): Future[Response] =
+    promise.future.map {
+      case Valid(value) => convert(value).asRight
+      case Invalid(ne)  => convertError(ne).asLeft
+    }
 
 }

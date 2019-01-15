@@ -14,3 +14,7 @@ trait ClientRepository[M[_]]
   override type IdType        = ClientId
   override type AggregateType = Client
 }
+
+object ClientRepository {
+  def apply[M[_]](implicit M: ClientRepository[M]): ClientRepository[M] = M
+}

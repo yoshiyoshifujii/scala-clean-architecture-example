@@ -25,4 +25,3 @@ object SecretGenerator {
   def generate: Secret = Secret(generator.generatePassword(32, toCharacterRules.asJava))
 
 }
-
