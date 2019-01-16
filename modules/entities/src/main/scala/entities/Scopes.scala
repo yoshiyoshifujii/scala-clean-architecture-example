@@ -1,6 +1,7 @@
 package entities
 
 import cats.data.NonEmptyList
+import cats.data.Validated.{ Invalid, Valid }
 import cats.implicits._
 
 case class Scopes(value: NonEmptyList[Scope]) {
@@ -17,16 +18,21 @@ object Scopes {
     }
 
   def fromSeqString(value: Seq[String]): ValidationResult[Scopes] =
-    value
-      .map(Scope.withName)
-      .toList
-      .toNel
-      .map(new Scopes(_).validNel)
+    value.toList.toNel
+      .map(fromNELString)
       .getOrElse(
-        EntitiesError("Cannot create NonEmptyList from empty list").invalidNel
+        EntitiesError("scopes fields is empty").invalidNel
       )
 
-  def fromNELString(value: NonEmptyList[String]): Scopes =
-    Scopes(value.map(Scope.withName))
+  def fromNELString(value: NonEmptyList[String]): ValidationResult[Scopes] =
+    value
+      .map(Scope.withNameValidation).foldLeft(Seq.empty[Scope].validNel[EntitiesError]) {
+        case (Valid(acc), Valid(v))           => (acc :+ v).validNel
+        case (invalid @ Invalid(_), Valid(_)) => invalid
+        case (Valid(_), invalid @ Invalid(_)) => invalid
+        case (Invalid(e1), Invalid(e2))       => Invalid(e1 ++ e2.toList)
+      }.map { a =>
+        Scopes(NonEmptyList.of(a.head, a.tail: _*))
+      }
 
 }

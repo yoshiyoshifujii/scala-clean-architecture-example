@@ -14,7 +14,7 @@ import scala.util.{ Failure, Success, Try }
 
 class ClientCreateUseCaseSpec extends FreeSpec {
 
-  "pattern Try" in {
+  "pattern Try" - {
 
     type ClientF[A] = Try[A]
 
@@ -43,35 +43,77 @@ class ClientCreateUseCaseSpec extends FreeSpec {
       def response: Future[String] = _response.future
     }
 
-    val output1 = new SamplePresenter
-    new ClientCreateUseCase(
-      outputBoundary = output1,
-      clientIdGenerator,
-      clientRepository
-    ).execute(input)
-    assert(Await.result(output1.response, 1.second) == "1")
+    "success" in {
+      val output = new SamplePresenter
+      new ClientCreateUseCase(
+        outputBoundary = output,
+        clientIdGenerator,
+        clientRepository
+      ).execute(input)
+      assert(Await.result(output.response, 1.second) == "1")
+    }
 
-    val output2 = new SamplePresenter
-    new ClientCreateUseCase(
-      outputBoundary = output2,
-      clientIdGenerator,
-      clientRepository
-    ).execute(input.copy(name = Some("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")))
-    assert(
-      Await.result(output2.response, 1.second) == "NonEmptyList(EntitiesError(name fields maximum length from 50 characters))"
-    )
+    "name length over maximum" in {
+      val output = new SamplePresenter
+      new ClientCreateUseCase(
+        outputBoundary = output,
+        clientIdGenerator,
+        clientRepository
+      ).execute(input.copy(name = Some("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")))
+      assert(
+        Await.result(output.response, 1.second) == "NonEmptyList(EntitiesError(name fields maximum length from 50 characters))"
+      )
+    }
 
-    val clientRepository2: ClientRepository[ClientF] =
-      new ClientRepositoryOnMemory[ClientF]() {
-        override def store(aggregate: Client): ClientF[Long] = Failure(new RuntimeException("hoge"))
-      }
-    val output3 = new SamplePresenter
-    new ClientCreateUseCase(
-      outputBoundary = output3,
-      clientIdGenerator,
-      clientRepository2
-    ).execute(input)
-    assertThrows[RuntimeException](Await.result(output3.response, 1.second))
+    "throw exception" in {
+      val clientRepository2: ClientRepository[ClientF] =
+        new ClientRepositoryOnMemory[ClientF]() {
+          override def store(aggregate: Client): ClientF[Long] = Failure(new RuntimeException("hoge"))
+        }
+      val output = new SamplePresenter
+      new ClientCreateUseCase(
+        outputBoundary = output,
+        clientIdGenerator,
+        clientRepository2
+      ).execute(input)
+      assertThrows[RuntimeException](Await.result(output.response, 1.second))
+    }
+
+    "redirectUris is empty" in {
+      val output = new SamplePresenter
+      new ClientCreateUseCase(
+        outputBoundary = output,
+        clientIdGenerator,
+        clientRepository
+      ).execute(input.copy(redirectUris = Seq.empty))
+      assert(
+        Await.result(output.response, 1.second) == "NonEmptyList(EntitiesError(redirectUris fields is empty))"
+      )
+    }
+
+    "scopes is empty" in {
+      val output = new SamplePresenter
+      new ClientCreateUseCase(
+        outputBoundary = output,
+        clientIdGenerator,
+        clientRepository
+      ).execute(input.copy(scopes = Seq.empty))
+      assert(
+        Await.result(output.response, 1.second) == "NonEmptyList(EntitiesError(scopes fields is empty))"
+      )
+    }
+
+    "scope invalid value" in {
+      val output = new SamplePresenter
+      new ClientCreateUseCase(
+        outputBoundary = output,
+        clientIdGenerator,
+        clientRepository
+      ).execute(input.copy(scopes = Seq("hoge", "fuga")))
+      assert(
+        Await.result(output.response, 1.second) == "NonEmptyList(EntitiesError(hoge is not a member), EntitiesError(fuga is not a member))"
+      )
+    }
   }
 
   "pattern Future" in {
