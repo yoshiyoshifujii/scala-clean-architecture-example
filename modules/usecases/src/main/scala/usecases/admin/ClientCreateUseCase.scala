@@ -3,6 +3,8 @@ package usecases.admin
 import cats.MonadError
 import cats.implicits._
 import entities._
+import entities.client.{ Client, ClientId }
+import entities.secret.SecretGenerator
 import gateway.generators.IdGenerator
 import gateway.repositories.ClientRepository
 import usecases.{ OutputBoundary, UseCaseInteractor }

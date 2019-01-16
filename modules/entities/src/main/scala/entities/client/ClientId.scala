@@ -1,4 +1,4 @@
-package entities
+package entities.client
 
 import com.github.j5ik2o.dddbase.AggregateLongId
 

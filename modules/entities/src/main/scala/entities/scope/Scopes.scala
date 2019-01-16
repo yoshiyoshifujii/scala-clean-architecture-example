@@ -1,8 +1,9 @@
-package entities
+package entities.scope
 
 import cats.data.NonEmptyList
 import cats.data.Validated.{ Invalid, Valid }
 import cats.implicits._
+import entities.{ EntitiesError, ValidationResult }
 
 case class Scopes(value: NonEmptyList[Scope]) {
   val toStringList: List[String]      = value.map(_.entryName).toList

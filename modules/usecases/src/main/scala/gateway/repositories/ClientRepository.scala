@@ -1,7 +1,7 @@
 package gateway.repositories
 
 import com.github.j5ik2o.dddbase._
-import entities.{ Client, ClientId }
+import entities.client.{ Client, ClientId }
 
 trait ClientRepository[M[_]]
     extends AggregateSingleReader[M]

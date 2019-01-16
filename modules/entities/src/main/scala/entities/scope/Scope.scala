@@ -1,6 +1,7 @@
-package entities
+package entities.scope
 
 import cats.implicits._
+import entities.{ EntitiesError, ValidationResult }
 import enumeratum._
 
 import scala.collection.immutable

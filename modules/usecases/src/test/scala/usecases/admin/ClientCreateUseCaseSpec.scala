@@ -2,7 +2,8 @@ package usecases.admin
 
 import cats.data.Validated.{ Invalid, Valid }
 import cats.implicits._
-import entities.{ Client, ValidationResult }
+import entities.ValidationResult
+import entities.client.Client
 import gateway.generators.ClientIdGeneratorMock
 import gateway.repositories.{ ClientRepository, ClientRepositoryOnMemory }
 import org.scalatest.FreeSpec

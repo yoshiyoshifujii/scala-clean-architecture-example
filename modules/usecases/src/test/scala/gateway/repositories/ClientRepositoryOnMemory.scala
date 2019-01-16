@@ -1,7 +1,8 @@
 package gateway.repositories
 
 import cats.MonadError
-import entities.{ Client, ClientId, Status }
+import entities.client.{ Client, ClientId }
+import entities.status.Status
 
 class ClientRepositoryOnMemory[M[_]](implicit ME: MonadError[M, Throwable]) extends ClientRepository[M] {
 

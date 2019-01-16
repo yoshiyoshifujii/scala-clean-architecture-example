@@ -1,4 +1,4 @@
-package entities
+package entities.status
 
 import enumeratum._
 

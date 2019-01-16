@@ -1,4 +1,4 @@
-package entities
+package entities.client
 
 import java.time.ZonedDateTime
 
@@ -6,6 +6,10 @@ import cats.Monad
 import cats.data.NonEmptyList
 import cats.implicits._
 import com.github.j5ik2o.dddbase.Aggregate
+import entities._
+import entities.scope.Scopes
+import entities.secret.Secret
+import entities.status.Status
 
 import scala.reflect.{ classTag, ClassTag }
 
