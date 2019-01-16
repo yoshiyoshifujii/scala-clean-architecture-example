@@ -25,7 +25,7 @@ final class ClientCreateUseCase[M[_]](
         name = arg.name,
         secret = SecretGenerator.generate,
         redirectUris = arg.redirectUris,
-        scopes = Scopes.fromSeqString(arg.scopes)
+        scopes = arg.scopes
       )
       _ <- client.fold(
         _ => ME.point(client),

@@ -30,31 +30,33 @@ object Client {
       name: Option[String],
       secret: Secret,
       redirectUris: Seq[String],
-      scopes: Scopes
+      scopes: Seq[String]
   ): M[ValidationResult[Client]] =
     for {
       _id <- id
     } yield
-      (validateName(name), validateRedirectUris(redirectUris)) mapN {
-        case (_clientName, _redirectUris) =>
+      (validateName(name), validateRedirectUris(redirectUris), validateScopes(scopes)) mapN {
+        case (_clientName, _redirectUris, _scopes) =>
           Client(
             id = _id,
             name = _clientName,
             secret,
-            _redirectUris,
-            scopes,
+            redirectUris = _redirectUris,
+            scopes = _scopes,
             status = Status.Active,
             createdAt = ZonedDateTime.now,
             updatedAt = None
           )
       }
 
-  def validateName(arg: Option[String]): ValidationResult[Option[ClientName]] =
+  private def validateName(arg: Option[String]): ValidationResult[Option[ClientName]] =
     if (arg.exists(_.length <= 50)) arg.map(ClientName).validNel
     else EntitiesError("name fields maximum length from 50 characters").invalidNel
 
-  def validateRedirectUris(arg: Seq[String]): ValidationResult[NonEmptyList[String]] =
+  private def validateRedirectUris(arg: Seq[String]): ValidationResult[NonEmptyList[String]] =
     if (arg.nonEmpty) NonEmptyList.of(arg.head, arg.tail: _*).validNel
     else EntitiesError("redirectUris fields is empty").invalidNel
 
+  private def validateScopes(arg: Seq[String]): ValidationResult[Scopes] =
+    Scopes.fromSeqString(arg)
 }
