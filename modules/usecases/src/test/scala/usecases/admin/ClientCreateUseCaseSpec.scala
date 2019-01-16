@@ -2,7 +2,7 @@ package usecases.admin
 
 import cats.data.Validated.{ Invalid, Valid }
 import cats.implicits._
-import entities.ValidationResult
+import entities.{ Client, ValidationResult }
 import gateway.generators.ClientIdGeneratorMock
 import gateway.repositories.{ ClientRepository, ClientRepositoryOnMemory }
 import org.scalatest.FreeSpec
@@ -20,7 +20,7 @@ class ClientCreateUseCaseSpec extends FreeSpec {
 
       type ClientF[A] = Try[A]
 
-      implicit val clientRepository: ClientRepository[ClientF] =
+      val clientRepository: ClientRepository[ClientF] =
         new ClientRepositoryOnMemory[ClientF]()
 
       val clientIdGenerator = new ClientIdGeneratorMock[ClientF]()
@@ -48,16 +48,32 @@ class ClientCreateUseCaseSpec extends FreeSpec {
       val output1 = new SamplePresenter
       new ClientCreateUseCase(
         outputBoundary = output1,
-        clientIdGenerator = clientIdGenerator
+        clientIdGenerator,
+        clientRepository
       ).execute(input)
       assert(Await.result(output1.response, 1.second) == "1")
 
       val output2 = new SamplePresenter
       new ClientCreateUseCase(
         outputBoundary = output2,
-        clientIdGenerator = clientIdGenerator
+        clientIdGenerator,
+        clientRepository
+      ).execute(input.copy(name = Some("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")))
+      assert(
+        Await.result(output2.response, 1.second) == "NonEmptyList(EntitiesError(name fields maximum length from 50 characters))"
+      )
+
+      val clientRepository2: ClientRepository[ClientF] =
+        new ClientRepositoryOnMemory[ClientF]() {
+          override def store(aggregate: Client): ClientF[Long] = Failure(new RuntimeException("hoge"))
+        }
+      val output3 = new SamplePresenter
+      new ClientCreateUseCase(
+        outputBoundary = output3,
+        clientIdGenerator,
+        clientRepository2
       ).execute(input)
-      assert(Await.result(output2.response, 1.second) == "2")
+      assertThrows[RuntimeException](Await.result(output3.response, 1.second))
     }
 
     "pattern Future" in {
@@ -66,7 +82,7 @@ class ClientCreateUseCaseSpec extends FreeSpec {
 
       implicit val ec: ExecutionContext = ExecutionContext.global
 
-      implicit val clientRepository: ClientRepository[ClientF] =
+      val clientRepository: ClientRepository[ClientF] =
         new ClientRepositoryOnMemory[ClientF]()
 
       val clientIdGenerator = new ClientIdGeneratorMock[ClientF]()
@@ -94,14 +110,16 @@ class ClientCreateUseCaseSpec extends FreeSpec {
       val output1 = new SamplePresenter
       new ClientCreateUseCase(
         outputBoundary = output1,
-        clientIdGenerator = clientIdGenerator
+        clientIdGenerator,
+        clientRepository
       ).execute(input)
       assert(Await.result(output1.response, 1.second) == "1")
 
       val output2 = new SamplePresenter
       new ClientCreateUseCase(
         outputBoundary = output2,
-        clientIdGenerator = clientIdGenerator
+        clientIdGenerator,
+        clientRepository
       ).execute(input)
       assert(Await.result(output2.response, 1.second) == "2")
     }

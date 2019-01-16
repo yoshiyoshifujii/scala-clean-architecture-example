@@ -11,9 +11,10 @@ case class ClientCreateInput(name: Option[String], redirectUris: Seq[String], sc
 
 case class ClientCreateOutput(id: Long, secret: String)
 
-class ClientCreateUseCase[M[_]: ClientRepository](
+class ClientCreateUseCase[M[_]](
     override protected val outputBoundary: OutputBoundary[M, ClientCreateOutput],
-    protected val clientIdGenerator: IdGenerator[M, ClientId]
+    protected val clientIdGenerator: IdGenerator[M, ClientId],
+    protected val clientRepository: ClientRepository[M]
 )(implicit ME: MonadError[M, Throwable])
     extends UseCaseInteractor[M, ClientCreateInput, ClientCreateOutput] {
 
@@ -28,7 +29,7 @@ class ClientCreateUseCase[M[_]: ClientRepository](
       )
       _ <- client.fold(
         _ => ME.point(client),
-        ClientRepository[M].store(_).map(_ => client)
+        clientRepository.store(_).map(_ => client)
       )
     } yield
       client.map { _client =>
