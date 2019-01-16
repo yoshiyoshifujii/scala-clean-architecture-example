@@ -1,14 +1,14 @@
 package usecases.admin
 
-import cats.data.Validated.{Invalid, Valid}
+import cats.data.Validated.{ Invalid, Valid }
 import cats.implicits._
-import entities.{Client, ClientId, ValidationResult}
+import entities.{ Client, ClientId, ValidationResult }
 import gateway.generators.ClientIdGeneratorMock
-import gateway.repositories.{ClientRepository, ClientRepositoryOnMemory}
+import gateway.repositories.{ ClientRepository, ClientRepositoryOnMemory }
 import org.scalatest.FreeSpec
 import usecases.OutputBoundary
 
-import scala.util.{Failure, Success, Try}
+import scala.util.{ Failure, Success, Try }
 
 class ClientCreateUseCaseSpec extends FreeSpec {
 
@@ -35,9 +35,9 @@ class ClientCreateUseCaseSpec extends FreeSpec {
 
         override def onComplete(result: ClientF[ValidationResult[ClientCreateOutput]]): Unit =
           result match {
-            case Success(Valid(value)) => _response = value.id.toString
+            case Success(Valid(value))   => _response = value.id.toString
             case Success(Invalid(value)) => _response = value.toString
-            case Failure(cause) => _response = cause.getMessage
+            case Failure(cause)          => _response = cause.getMessage
           }
 
         def response: String = _response
