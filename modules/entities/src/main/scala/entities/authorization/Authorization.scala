@@ -2,7 +2,7 @@ package entities.authorization
 
 import java.time.ZonedDateTime
 
-import cats.{ Monad, MonadError }
+import cats.Monad
 import cats.data.Validated.{ Invalid, Valid }
 import cats.implicits._
 import com.github.j5ik2o.dddbase.Aggregate
@@ -61,7 +61,7 @@ case class Authorization(id: AuthorizationId,
         accessTokenGenerator: AccessTokenGenerator[M],
         refreshToken: RefreshToken,
         scopes: Option[Seq[String]]
-    )(implicit ME: MonadError[M, Throwable]): M[EntitiesValidationResult[Token]] =
+    )(implicit ME: Monad[M]): M[EntitiesValidationResult[Token]] =
       Scopes.fromOptSeqString(scopes) match {
         case invalid @ Invalid(_) => ME.point(invalid)
         case Valid(a) =>

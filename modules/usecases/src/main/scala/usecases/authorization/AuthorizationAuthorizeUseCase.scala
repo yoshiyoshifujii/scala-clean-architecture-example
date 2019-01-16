@@ -1,9 +1,7 @@
 package usecases.authorization
 
-import cats.MonadError
-import cats.implicits._
+import cats.Monad
 import entities.EntitiesValidationResult
-import entities.client.ClientId
 import gateway.repositories.ClientRepository
 import usecases.{ OutputBoundary, UseCaseInteractor }
 
@@ -23,7 +21,7 @@ case class AuthorizationAuthorizeOutput(redirectUri: Option[String],
 class AuthorizationAuthorizeUseCase[M[_]](
     override protected val outputBoundary: OutputBoundary[M, AuthorizationAuthorizeOutput],
     private val clientRepository: ClientRepository[M]
-)(implicit ME: MonadError[M, Throwable])
+)(implicit ME: Monad[M])
     extends UseCaseInteractor[M, AuthorizationAuthorizeInput, AuthorizationAuthorizeOutput] {
 
   override protected def call(

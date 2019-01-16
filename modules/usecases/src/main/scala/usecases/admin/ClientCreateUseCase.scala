@@ -1,6 +1,6 @@
 package usecases.admin
 
-import cats.MonadError
+import cats.Monad
 import cats.implicits._
 import entities._
 import entities.client.{ Client, ClientId }
@@ -17,7 +17,7 @@ final class ClientCreateUseCase[M[_]](
     override protected val outputBoundary: OutputBoundary[M, ClientCreateOutput],
     private val clientIdGenerator: IdGenerator[M, ClientId],
     private val clientRepository: ClientRepository[M]
-)(implicit ME: MonadError[M, Throwable])
+)(implicit ME: Monad[M])
     extends UseCaseInteractor[M, ClientCreateInput, ClientCreateOutput] {
 
   override protected def call(arg: ClientCreateInput): M[EntitiesValidationResult[ClientCreateOutput]] =
