@@ -16,7 +16,8 @@ class ClientRepositoryOnMemory[M[_]](implicit ME: MonadError[M, Throwable]) exte
 
   override def softDeleteMulti(ids: Seq[ClientId]): M[Long] = ???
 
-  override def resolveAll: M[Seq[Client]] = ???
+  override def resolveAll: M[Seq[Client]] =
+    ME.point(map.values.toSeq)
 
   override def resolveById(id: ClientId): M[Client] = {
     map.get(id).map(ME.point).getOrElse(ME.raiseError(new RuntimeException("Not Found.")))

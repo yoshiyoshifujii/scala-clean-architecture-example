@@ -11,10 +11,10 @@ case class ClientCreateInput(name: Option[String], redirectUris: Seq[String], sc
 
 case class ClientCreateOutput(id: Long, secret: String)
 
-class ClientCreateUseCase[M[_]](
+final class ClientCreateUseCase[M[_]](
     override protected val outputBoundary: OutputBoundary[M, ClientCreateOutput],
-    protected val clientIdGenerator: IdGenerator[M, ClientId],
-    protected val clientRepository: ClientRepository[M]
+    private val clientIdGenerator: IdGenerator[M, ClientId],
+    private val clientRepository: ClientRepository[M]
 )(implicit ME: MonadError[M, Throwable])
     extends UseCaseInteractor[M, ClientCreateInput, ClientCreateOutput] {
 
