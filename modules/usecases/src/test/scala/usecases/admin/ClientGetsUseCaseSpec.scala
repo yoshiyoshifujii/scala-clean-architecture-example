@@ -2,7 +2,7 @@ package usecases.admin
 
 import cats.data.Validated.{ Invalid, Valid }
 import cats.implicits._
-import entities.ValidationResult
+import entities.EntitiesValidationResult
 import gateway.repositories.{ ClientRepository, ClientRepositoryOnMemory }
 import org.scalatest.FreeSpec
 import usecases.OutputBoundary
@@ -27,7 +27,7 @@ class ClientGetsUseCaseSpec extends FreeSpec {
 
       private val _response: Promise[Response] = Promise()
 
-      override def onComplete(result: ClientF[ValidationResult[ClientGetsOutput]]): Unit =
+      override def onComplete(result: ClientF[EntitiesValidationResult[ClientGetsOutput]]): Unit =
         result match {
           case Success(Valid(value))   => _response.success(value.clients.map(_.toString).asRight)
           case Success(Invalid(value)) => _response.success(value.toString.asLeft)

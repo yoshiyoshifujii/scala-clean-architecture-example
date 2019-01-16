@@ -12,7 +12,7 @@ import entities.responsetype.ResponseType
 import entities.scope.Scopes
 import entities.state.State
 import entities.status.Status
-import entities.{ EntitiesError, ValidationResult }
+import entities.{ EntitiesError, EntitiesValidationResult }
 
 import scala.reflect.{ classTag, ClassTag }
 
@@ -33,7 +33,7 @@ case class ReservedAuthorization(id: ReservedAuthorizationId,
   def approve(authorizationId: AuthorizationId,
               clientId: Long,
               scope: Option[Seq[String]],
-              accountId: String): ValidationResult[(AuthorizationCode, Authorization)] =
+              accountId: String): EntitiesValidationResult[(AuthorizationCode, Authorization)] =
     (validateClientId(clientId), validateScope(scope)) mapN {
       case (_clientId, _scopes) =>
         (
@@ -57,19 +57,19 @@ case class ReservedAuthorization(id: ReservedAuthorizationId,
         )
     }
 
-  private def validateClientId(clientId: Long): ValidationResult[ClientId] =
+  private def validateClientId(clientId: Long): EntitiesValidationResult[ClientId] =
     if (clientId == this.clientId.value)
       this.clientId.validNel
     else
       EntitiesError("client id is wrong.").invalidNel
 
-  private def validateScope(scope: Option[Seq[String]]): ValidationResult[Scopes] =
+  private def validateScope(scope: Option[Seq[String]]): EntitiesValidationResult[Scopes] =
     if (true)
       this.scopes.validNel
     else
       EntitiesError("scope is bad.").invalidNel
 
-  def deny(clientId: Long): ValidationResult[ReservedAuthorization] =
+  def deny(clientId: Long): EntitiesValidationResult[ReservedAuthorization] =
     validateClientId(clientId).map(_ => this)
 
 }

@@ -3,7 +3,7 @@ package entities.scope
 import cats.data.NonEmptyList
 import cats.data.Validated.{ Invalid, Valid }
 import cats.implicits._
-import entities.{ EntitiesError, ValidationResult }
+import entities.{ EntitiesError, EntitiesValidationResult }
 
 case class Scopes(value: NonEmptyList[Scope]) {
   val toStringList: List[String]      = value.map(_.entryName).toList
@@ -12,20 +12,20 @@ case class Scopes(value: NonEmptyList[Scope]) {
 
 object Scopes {
 
-  def fromOptSeqString(value: Option[Seq[String]]): ValidationResult[Option[Scopes]] =
+  def fromOptSeqString(value: Option[Seq[String]]): EntitiesValidationResult[Option[Scopes]] =
     value match {
       case Some(v) => fromSeqString(v).map(_.some)
       case None    => None.validNel
     }
 
-  def fromSeqString(value: Seq[String]): ValidationResult[Scopes] =
+  def fromSeqString(value: Seq[String]): EntitiesValidationResult[Scopes] =
     value.toList.toNel
       .map(fromNELString)
       .getOrElse(
         EntitiesError("scopes fields is empty").invalidNel
       )
 
-  def fromNELString(value: NonEmptyList[String]): ValidationResult[Scopes] =
+  def fromNELString(value: NonEmptyList[String]): EntitiesValidationResult[Scopes] =
     value
       .map(Scope.withNameValidation).foldLeft(Seq.empty[Scope].validNel[EntitiesError]) {
         case (Valid(acc), Valid(v))           => (acc :+ v).validNel

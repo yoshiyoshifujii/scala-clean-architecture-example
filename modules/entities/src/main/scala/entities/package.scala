@@ -4,13 +4,13 @@ package object entities {
 
   case class EntitiesError(message: String)
 
-  type ValidationResult[A] = ValidatedNel[EntitiesError, A]
+  type EntitiesValidationResult[A] = ValidatedNel[EntitiesError, A]
 
-  trait EnumWithValidation[E <: enumeratum.EnumEntry] {
+  private[entities] trait EnumWithValidation[E <: enumeratum.EnumEntry] {
     self: enumeratum.Enum[E] =>
     import cats.implicits._
 
-    def withNameValidation(name: String): ValidationResult[E] =
+    def withNameValidation(name: String): EntitiesValidationResult[E] =
       self.withNameOption(name).map(_.validNel).getOrElse(EntitiesError(s"$name is not a member").invalidNel)
   }
 

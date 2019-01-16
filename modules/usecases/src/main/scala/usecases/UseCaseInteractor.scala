@@ -1,6 +1,6 @@
 package usecases
 
-import entities.ValidationResult
+import entities.EntitiesValidationResult
 
 trait UseCaseInteractor[M[_], InputData, OutputData] extends InputBoundary[InputData] {
 
@@ -8,6 +8,6 @@ trait UseCaseInteractor[M[_], InputData, OutputData] extends InputBoundary[Input
 
   override def execute(arg: InputData): Unit = outputBoundary.onComplete(call(arg))
 
-  protected def call(arg: InputData): M[ValidationResult[OutputData]]
+  protected def call(arg: InputData): M[EntitiesValidationResult[OutputData]]
 
 }

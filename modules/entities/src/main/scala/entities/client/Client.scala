@@ -34,7 +34,7 @@ case class Client(id: ClientId,
   def reservedAuthorization(responseType: String,
                             redirectUri: Option[String],
                             scope: Option[Seq[String]],
-                            state: Option[String]): ValidationResult[ReservedAuthorization] =
+                            state: Option[String]): EntitiesValidationResult[ReservedAuthorization] =
     (validateResponseType(responseType), validateRedirectUri(redirectUri), validateScope(scope), validateState(state)) mapN {
       case (_responseType, _redirectUri, _scope, _state) =>
         ReservedAuthorization(
@@ -50,30 +50,30 @@ case class Client(id: ClientId,
         )
     }
 
-  private def validateResponseType(responseType: String): ValidationResult[ResponseType] =
+  private def validateResponseType(responseType: String): EntitiesValidationResult[ResponseType] =
     if (responseType == ResponseType.Code.entryName)
       ResponseType.Code.validNel
     else
       EntitiesError("response type is only 'code'").invalidNel
 
-  private def validateRedirectUri(redirectUri: Option[String]): ValidationResult[RedirectUri] =
+  private def validateRedirectUri(redirectUri: Option[String]): EntitiesValidationResult[RedirectUri] =
     redirectUri.map(RedirectUri).getOrElse(RedirectUri(this.redirectUris.head)).validNel
 
-  private def validateScope(scope: Option[Seq[String]]): ValidationResult[Scopes] =
+  private def validateScope(scope: Option[Seq[String]]): EntitiesValidationResult[Scopes] =
     Scopes.fromOptSeqString(scope).map {
       case Some(s) => s
       case None    => this.scopes
     }
 
-  private def validateState(state: Option[String]): ValidationResult[Option[State]] =
+  private def validateState(state: Option[String]): EntitiesValidationResult[Option[State]] =
     state.map(State).validNel
 
-  def authenticate(password: String): ValidationResult[Client] =
+  def authenticate(password: String): EntitiesValidationResult[Client] =
     validateSecret(password) map { _ =>
       this
     }
 
-  private def validateSecret(secret: String): ValidationResult[Secret] =
+  private def validateSecret(secret: String): EntitiesValidationResult[Secret] =
     if (secret == this.secret.value)
       this.secret.validNel
     else
@@ -89,7 +89,7 @@ object Client {
       secret: Secret,
       redirectUris: Seq[String],
       scopes: Seq[String]
-  ): M[ValidationResult[Client]] =
+  ): M[EntitiesValidationResult[Client]] =
     for {
       _id <- id
     } yield
@@ -107,14 +107,14 @@ object Client {
           )
       }
 
-  private def validateName(arg: Option[String]): ValidationResult[Option[ClientName]] =
+  private def validateName(arg: Option[String]): EntitiesValidationResult[Option[ClientName]] =
     if (arg.exists(_.length <= 50)) arg.map(ClientName).validNel
     else EntitiesError("name fields maximum length from 50 characters").invalidNel
 
-  private def validateRedirectUris(arg: Seq[String]): ValidationResult[NonEmptyList[String]] =
+  private def validateRedirectUris(arg: Seq[String]): EntitiesValidationResult[NonEmptyList[String]] =
     if (arg.nonEmpty) NonEmptyList.of(arg.head, arg.tail: _*).validNel
     else EntitiesError("redirectUris fields is empty").invalidNel
 
-  private def validateScopes(arg: Seq[String]): ValidationResult[Scopes] =
+  private def validateScopes(arg: Seq[String]): EntitiesValidationResult[Scopes] =
     Scopes.fromSeqString(arg)
 }

@@ -2,7 +2,7 @@ package usecases.admin
 
 import cats.MonadError
 import cats.implicits._
-import entities.ValidationResult
+import entities.EntitiesValidationResult
 import gateway.repositories.ClientRepository
 import usecases.{ OutputBoundary, UseCaseInteractor }
 
@@ -23,7 +23,7 @@ final class ClientGetsUseCase[M[_]](
 )(implicit ME: MonadError[M, Throwable])
     extends UseCaseInteractor[M, ClientGetsInput, ClientGetsOutput] {
 
-  override protected def call(arg: ClientGetsInput): M[ValidationResult[ClientGetsOutput]] =
+  override protected def call(arg: ClientGetsInput): M[EntitiesValidationResult[ClientGetsOutput]] =
     clientRepository.resolveAll.map { aggregates =>
       ClientGetsOutput(aggregates.map { e =>
         ClientOutput(

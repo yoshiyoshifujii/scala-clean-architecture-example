@@ -10,7 +10,7 @@ import entities.client.ClientId
 import entities.scope.Scopes
 import entities.status.Status
 import entities.token._
-import entities.{ EntitiesError, ValidationResult }
+import entities.{ EntitiesError, EntitiesValidationResult }
 
 import scala.reflect.{ classTag, ClassTag }
 
@@ -44,12 +44,12 @@ case class Authorization(id: AuthorizationId,
       (auth, token)
     }
 
-  def authenticate(clientId: ClientId): ValidationResult[VerifiedAuthorization] =
+  def authenticate(clientId: ClientId): EntitiesValidationResult[VerifiedAuthorization] =
     validateClientId(clientId) map { _ =>
       new VerifiedAuthorization(this)
     }
 
-  private def validateClientId(clientId: ClientId): ValidationResult[ClientId] =
+  private def validateClientId(clientId: ClientId): EntitiesValidationResult[ClientId] =
     if (clientId == this.clientId)
       clientId.validNel
     else
@@ -61,7 +61,7 @@ case class Authorization(id: AuthorizationId,
         accessTokenGenerator: AccessTokenGenerator[M],
         refreshToken: RefreshToken,
         scopes: Option[Seq[String]]
-    )(implicit ME: MonadError[M, Throwable]): M[ValidationResult[Token]] =
+    )(implicit ME: MonadError[M, Throwable]): M[EntitiesValidationResult[Token]] =
       Scopes.fromOptSeqString(scopes) match {
         case invalid @ Invalid(_) => ME.point(invalid)
         case Valid(a) =>

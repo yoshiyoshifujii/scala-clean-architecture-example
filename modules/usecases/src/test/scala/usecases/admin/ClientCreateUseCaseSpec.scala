@@ -2,7 +2,7 @@ package usecases.admin
 
 import cats.data.Validated.{ Invalid, Valid }
 import cats.implicits._
-import entities.ValidationResult
+import entities.EntitiesValidationResult
 import entities.client.Client
 import gateway.generators.ClientIdGeneratorMock
 import gateway.repositories.{ ClientRepository, ClientRepositoryOnMemory }
@@ -34,7 +34,7 @@ class ClientCreateUseCaseSpec extends FreeSpec {
 
       private val _response: Promise[String] = Promise()
 
-      override def onComplete(result: ClientF[ValidationResult[ClientCreateOutput]]): Unit =
+      override def onComplete(result: ClientF[EntitiesValidationResult[ClientCreateOutput]]): Unit =
         result match {
           case Success(Valid(value))   => _response.success(value.id.toString)
           case Success(Invalid(value)) => _response.success(value.toString)
@@ -138,7 +138,7 @@ class ClientCreateUseCaseSpec extends FreeSpec {
 
       private val _response: Promise[String] = Promise()
 
-      override def onComplete(result: ClientF[ValidationResult[ClientCreateOutput]]): Unit =
+      override def onComplete(result: ClientF[EntitiesValidationResult[ClientCreateOutput]]): Unit =
         result.onComplete({
           case Success(Valid(value))   => _response.success(value.id.toString)
           case Success(Invalid(value)) => _response.success(value.toString)

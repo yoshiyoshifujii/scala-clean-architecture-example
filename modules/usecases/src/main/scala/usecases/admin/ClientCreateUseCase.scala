@@ -20,7 +20,7 @@ final class ClientCreateUseCase[M[_]](
 )(implicit ME: MonadError[M, Throwable])
     extends UseCaseInteractor[M, ClientCreateInput, ClientCreateOutput] {
 
-  override protected def call(arg: ClientCreateInput): M[ValidationResult[ClientCreateOutput]] =
+  override protected def call(arg: ClientCreateInput): M[EntitiesValidationResult[ClientCreateOutput]] =
     for {
       client <- Client.create(
         id = clientIdGenerator.generateId,
