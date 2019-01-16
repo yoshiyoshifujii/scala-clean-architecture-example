@@ -7,8 +7,6 @@ import gateway.generators.IdGenerator
 import gateway.repositories.ClientRepository
 import usecases.{ OutputBoundary, UseCaseInteractor }
 
-import scala.language.higherKinds
-
 case class ClientCreateInput(name: Option[String], redirectUris: Seq[String], scopes: Seq[String])
 
 case class ClientCreateOutput(id: Long, secret: String)

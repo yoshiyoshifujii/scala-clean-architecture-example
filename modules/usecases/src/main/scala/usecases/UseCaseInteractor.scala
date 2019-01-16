@@ -2,8 +2,6 @@ package usecases
 
 import entities.ValidationResult
 
-import scala.language.higherKinds
-
 trait UseCaseInteractor[M[_], InputData, OutputData] extends InputBoundary[InputData] {
 
   protected val outputBoundary: OutputBoundary[M, OutputData]

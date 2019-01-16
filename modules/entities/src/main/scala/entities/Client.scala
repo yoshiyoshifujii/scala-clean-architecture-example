@@ -7,7 +7,6 @@ import cats.data.NonEmptyList
 import cats.implicits._
 import com.github.j5ik2o.dddbase.Aggregate
 
-import scala.language.higherKinds
 import scala.reflect.{ classTag, ClassTag }
 
 case class Client(id: ClientId,
