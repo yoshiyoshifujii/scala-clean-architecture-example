@@ -10,6 +10,11 @@ object Passay {
   val passay  = "org.passay" % "passay" % version
 }
 
+object Commons {
+  val version = "1.11"
+  val codec = "commons-codec" % "commons-codec" % version
+}
+
 object HashIds {
   val version = "1.0.3"
   val hashIds = "org.hashids" % "hashids" % version

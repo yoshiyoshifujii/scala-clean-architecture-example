@@ -1,12 +1,13 @@
 package entities.status
 
+import entities.EnumWithValidation
 import enumeratum._
 
 import scala.collection.immutable
 
 sealed abstract class Status(override val entryName: String) extends EnumEntry
 
-object Status extends Enum[Status] {
+object Status extends Enum[Status] with EnumWithValidation[Status] {
   override def values: immutable.IndexedSeq[Status] = findValues
   case object Active  extends Status("active")
   case object Suspend extends Status("suspend")

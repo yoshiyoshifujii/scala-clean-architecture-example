@@ -1,18 +1,14 @@
 package entities.scope
 
-import cats.implicits._
-import entities.{ EntitiesError, ValidationResult }
+import entities.EnumWithValidation
 import enumeratum._
 
 import scala.collection.immutable
 
 abstract sealed class Scope(override val entryName: String) extends EnumEntry
 
-object Scope extends Enum[Scope] {
+object Scope extends Enum[Scope] with EnumWithValidation[Scope] {
   override def values: immutable.IndexedSeq[Scope] = findValues
   case object ReadOnly  extends Scope("read-only")
   case object ReadWrite extends Scope("read-write")
-
-  def withNameValidation(name: String): ValidationResult[Scope] =
-    super.withNameOption(name).map(_.validNel).getOrElse(EntitiesError(s"$name is not a member").invalidNel)
 }

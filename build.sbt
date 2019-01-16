@@ -6,7 +6,8 @@ lazy val `infrastructure` = (project in file("modules/infrastructure"))
   .settings(
     name := s"$baseName-infrastructure",
     libraryDependencies ++= Seq(
-      Passay.passay
+      Passay.passay,
+      Commons.codec
     )
   )
   .settings(coreSettings)
