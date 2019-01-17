@@ -12,23 +12,23 @@ class ClientRepositoryOnMemory[M[_]](implicit ME: MonadError[M, Throwable]) exte
 
   override def store(aggregate: Client): M[Long] = {
     map + ((aggregate.id, aggregate))
-    ME.point(aggregate.id.value)
+    ME.pure(aggregate.id.value)
   }
 
   override def softDeleteMulti(ids: Seq[ClientId]): M[Long] = ???
 
   override def resolveAll: M[Seq[Client]] =
-    ME.point(map.values.toSeq)
+    ME.pure(map.values.toSeq)
 
   override def resolveById(id: ClientId): M[Client] = {
-    map.get(id).map(ME.point).getOrElse(ME.raiseError(new RuntimeException("Not Found.")))
+    map.get(id).map(ME.pure).getOrElse(ME.raiseError(new RuntimeException("Not Found.")))
   }
 
   override def softDelete(id: ClientId): M[Long] = {
     map
       .get(id).map { client =>
         store(client.copy(status = Status.Deleted))
-      }.getOrElse(ME.point(0L))
+      }.getOrElse(ME.pure(0L))
   }
 
   override def storeMulti(aggregates: Seq[Client]): M[Long] = ???

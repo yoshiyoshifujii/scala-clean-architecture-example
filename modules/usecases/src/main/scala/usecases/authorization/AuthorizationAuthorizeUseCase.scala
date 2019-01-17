@@ -28,7 +28,7 @@ class AuthorizationAuthorizeUseCase[M[_]](
       arg: AuthorizationAuthorizeInput
   ): M[EntitiesValidationResult[AuthorizationAuthorizeOutput]] = ???
 //    for {
-//      clientId <- ME.point(ClientId(arg.clientId))
+//      clientId <- ME.pure(ClientId(arg.clientId))
 //      client   <- clientRepository.resolveById(clientId)
 //      reservedAuth <- client
 //        .reservedAuthorization(

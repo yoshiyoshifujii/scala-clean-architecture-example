@@ -63,7 +63,7 @@ case class Authorization(id: AuthorizationId,
         scopes: Option[Seq[String]]
     )(implicit ME: Monad[M]): M[EntitiesValidationResult[Token]] =
       Scopes.fromOptSeqString(scopes) match {
-        case invalid @ Invalid(_) => ME.point(invalid)
+        case invalid @ Invalid(_) => ME.pure(invalid)
         case Valid(a) =>
           val _scopes = a.getOrElse(this.authorization.scopes)
           for {

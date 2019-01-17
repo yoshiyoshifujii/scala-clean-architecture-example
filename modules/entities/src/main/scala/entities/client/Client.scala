@@ -2,7 +2,6 @@ package entities.client
 
 import java.time.ZonedDateTime
 
-import cats.Monad
 import cats.data.NonEmptyList
 import cats.implicits._
 import com.github.j5ik2o.dddbase.Aggregate
@@ -83,29 +82,26 @@ case class Client(id: ClientId,
 
 object Client {
 
-  def create[M[_]: Monad](
-      id: M[ClientId],
+  def create(
+      id: ClientId,
       name: Option[String],
       secret: Secret,
       redirectUris: Seq[String],
       scopes: Seq[String]
-  ): M[EntitiesValidationResult[Client]] =
-    for {
-      _id <- id
-    } yield
-      (validateName(name), validateRedirectUris(redirectUris), validateScopes(scopes)) mapN {
-        case (_clientName, _redirectUris, _scopes) =>
-          Client(
-            id = _id,
-            name = _clientName,
-            secret,
-            redirectUris = _redirectUris,
-            scopes = _scopes,
-            status = Status.Active,
-            createdAt = ZonedDateTime.now,
-            updatedAt = None
-          )
-      }
+  ): EntitiesValidationResult[Client] =
+    (validateName(name), validateRedirectUris(redirectUris), validateScopes(scopes)) mapN {
+      case (_clientName, _redirectUris, _scopes) =>
+        Client(
+          id,
+          name = _clientName,
+          secret,
+          redirectUris = _redirectUris,
+          scopes = _scopes,
+          status = Status.Active,
+          createdAt = ZonedDateTime.now,
+          updatedAt = None
+        )
+    }
 
   private def validateName(arg: Option[String]): EntitiesValidationResult[Option[ClientName]] =
     if (arg.exists(_.length <= 50)) arg.map(ClientName).validNel

@@ -7,6 +7,6 @@ class ClientIdGeneratorMock[M[_]](implicit ME: MonadError[M, Throwable]) extends
   private var count = 0L
   override def generateId: M[ClientId] = {
     count = count + 1L
-    ME.point(ClientId(count))
+    ME.pure(ClientId(count))
   }
 }

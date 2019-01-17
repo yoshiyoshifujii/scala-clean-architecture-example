@@ -22,15 +22,16 @@ final class ClientCreateUseCase[M[_]](
 
   override protected def call(arg: ClientCreateInput): M[EntitiesValidationResult[ClientCreateOutput]] =
     for {
-      client <- Client.create(
-        id = clientIdGenerator.generateId,
+      id <- clientIdGenerator.generateId
+      client = Client.create(
+        id,
         name = arg.name,
         secret = SecretGenerator.generate,
         redirectUris = arg.redirectUris,
         scopes = arg.scopes
       )
       _ <- client.fold(
-        _ => ME.point(client),
+        _ => ME.pure(client),
         clientRepository.store(_).map(_ => client)
       )
     } yield
