@@ -17,11 +17,10 @@ case class ClientOutput(id: Long,
 
 case class ClientGetsOutput(clients: Seq[ClientOutput])
 
-final class ClientGetsUseCase[M[_]](
+final class ClientGetsUseCase[M[_]: Monad](
     override protected val outputBoundary: OutputBoundary[M, ClientGetsOutput],
     private val clientRepository: ClientRepository[M]
-)(implicit ME: Monad[M])
-    extends UseCaseInteractor[M, ClientGetsInput, ClientGetsOutput] {
+) extends UseCaseInteractor[M, ClientGetsInput, ClientGetsOutput] {
 
   override protected def call(arg: ClientGetsInput): M[EntitiesValidationResult[ClientGetsOutput]] =
     clientRepository.resolveAll.map { aggregates =>
