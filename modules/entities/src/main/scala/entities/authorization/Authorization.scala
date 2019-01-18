@@ -45,11 +45,11 @@ case class Authorization(id: AuthorizationId,
     }
 
   def authenticate(clientId: ClientId): EntitiesValidationResult[VerifiedAuthorization] =
-    validateClientId(clientId) map { _ =>
+    assertClientId(clientId) map { _ =>
       new VerifiedAuthorization(this)
     }
 
-  private def validateClientId(clientId: ClientId): EntitiesValidationResult[ClientId] =
+  private def assertClientId(clientId: ClientId): EntitiesValidationResult[ClientId] =
     if (clientId == this.clientId)
       clientId.validNel
     else

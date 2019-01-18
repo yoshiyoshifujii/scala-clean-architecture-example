@@ -34,7 +34,7 @@ case class ReservedAuthorization(id: ReservedAuthorizationId,
               clientId: Long,
               scope: Option[Seq[String]],
               accountId: String): EntitiesValidationResult[(AuthorizationCode, Authorization)] =
-    (validateClientId(clientId), validateScope(scope)) mapN {
+    (assertClientId(clientId), assertScope(scope)) mapN {
       case (_clientId, _scopes) =>
         (
           AuthorizationCode(
@@ -57,19 +57,19 @@ case class ReservedAuthorization(id: ReservedAuthorizationId,
         )
     }
 
-  private def validateClientId(clientId: Long): EntitiesValidationResult[ClientId] =
+  private def assertClientId(clientId: Long): EntitiesValidationResult[ClientId] =
     if (clientId == this.clientId.value)
       this.clientId.validNel
     else
       EntitiesError("client id is wrong.").invalidNel
 
-  private def validateScope(scope: Option[Seq[String]]): EntitiesValidationResult[Scopes] =
+  private def assertScope(scope: Option[Seq[String]]): EntitiesValidationResult[Scopes] =
     if (true)
       this.scopes.validNel
     else
       EntitiesError("scope is bad.").invalidNel
 
   def deny(clientId: Long): EntitiesValidationResult[ReservedAuthorization] =
-    validateClientId(clientId).map(_ => this)
+    assertClientId(clientId).map(_ => this)
 
 }
