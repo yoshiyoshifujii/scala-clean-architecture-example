@@ -3,12 +3,12 @@ package usecases.authorization
 import cats.implicits._
 import entities.client.{ Client, ClientId }
 import entities.secret.Secret
-import gateway.repositories.{ ClientRepository, ClientRepositoryOnMemory, ReservedAuthorizationRepositoryOnMemory }
+import gateway.repositories.{ ClientRepositoryOnMemory, ReservedAuthorizationRepositoryOnMemory }
 import org.scalatest.FreeSpec
 import usecases.OutputBoundary
 
-import scala.concurrent.{ Await, Future, Promise }
 import scala.concurrent.duration._
+import scala.concurrent.{ Await, Future, Promise }
 import scala.util.{ Failure, Success, Try }
 
 class AuthorizationAuthorizeUseCaseSpec extends FreeSpec {
