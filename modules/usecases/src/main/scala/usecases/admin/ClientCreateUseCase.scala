@@ -1,13 +1,13 @@
 package usecases.admin
 
-import cats.Monad
+import cats.MonadError
 import cats.implicits._
 import entities._
 import entities.client.{ Client, ClientId }
 import entities.secret.SecretGenerator
 import gateway.generators.IdGenerator
 import gateway.repositories.ClientRepository
-import usecases.{ OutputBoundary, UseCaseInteractor }
+import usecases.{ OutputBoundary, UseCaseApplicationError, UseCaseError, UseCaseInteractor }
 
 case class ClientCreateInput(name: Option[String], redirectUris: Seq[String], scopes: Seq[String])
 
@@ -17,7 +17,7 @@ final class ClientCreateUseCase[M[_]](
     override protected val outputBoundary: OutputBoundary[M, ClientCreateOutput],
     private val clientIdGenerator: IdGenerator[M, ClientId],
     private val clientRepository: ClientRepository[M]
-)(implicit ME: Monad[M])
+)(implicit ME: MonadError[M, UseCaseError])
     extends UseCaseInteractor[M, ClientCreateInput, ClientCreateOutput] {
 
   override protected def call(arg: ClientCreateInput): M[EntitiesValidationResult[ClientCreateOutput]] =
@@ -31,8 +31,8 @@ final class ClientCreateUseCase[M[_]](
         scopes = arg.scopes
       )
       _ <- client.fold(
-        _ => ME.pure(client),
-        clientRepository.store(_).map(_ => client)
+        a => ME.raiseError[Long](UseCaseApplicationError(a)),
+        clientRepository.store
       )
     } yield
       client.map { _client =>

@@ -1,7 +1,14 @@
+import cats.data.NonEmptyList
+import entities.EntitiesError
+
 package object usecases {
 
-  case class UseCaseError(message: String)
-
-  type UseCaseValidationResult[A] = Either[UseCaseError, A]
+  sealed trait UseCaseError
+  case class UseCaseSystemError(cause: Throwable)     extends UseCaseError
+  case class UseCaseApplicationError(message: String) extends UseCaseError
+  object UseCaseApplicationError {
+    def apply(message: NonEmptyList[EntitiesError]): UseCaseApplicationError =
+      new UseCaseApplicationError(message.toString())
+  }
 
 }
