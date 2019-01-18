@@ -12,10 +12,10 @@ package object usecases {
       new UseCaseApplicationError(message.toString())
   }
 
-  type UseCaseMonadError[M[_]] = MonadError[M, UseCaseError]
+  type UseCaseMonadError[F[_]] = MonadError[F, UseCaseError]
 
   implicit class EntitiesError2MonadError[A](val v: EntitiesValidationResult[A]) extends AnyVal {
-    def toM[M[_]](implicit ME: UseCaseMonadError[M]): M[A] =
+    def toM[F[_]](implicit ME: UseCaseMonadError[F]): F[A] =
       v.fold(
         ne => ME.raiseError(UseCaseApplicationError(ne)),
         ME.pure

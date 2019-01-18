@@ -1,7 +1,7 @@
 package entities.token
 
-trait RefreshTokenGenerator[M[_]] {
+trait RefreshTokenGenerator[F[_]] {
 
-  def generate: M[RefreshToken]
+  def generate: F[RefreshToken]
 
 }

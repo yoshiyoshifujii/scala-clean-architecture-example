@@ -18,14 +18,14 @@ case class AuthorizationAuthorizeOutput(redirectUri: Option[String],
                                         clientId: Long,
                                         clientName: Option[String])
 
-class AuthorizationAuthorizeUseCase[M[_]](
-    override protected val outputBoundary: OutputBoundary[M, AuthorizationAuthorizeOutput],
-    private val clientRepository: ClientRepository[M],
-    private val reservedAuthorizationRepository: ReservedAuthorizationRepository[M]
-)(implicit ME: UseCaseMonadError[M])
-    extends UseCaseInteractor[M, AuthorizationAuthorizeInput, AuthorizationAuthorizeOutput] {
+class AuthorizationAuthorizeUseCase[F[_]](
+    override protected val outputBoundary: OutputBoundary[F, AuthorizationAuthorizeOutput],
+    private val clientRepository: ClientRepository[F],
+    private val reservedAuthorizationRepository: ReservedAuthorizationRepository[F]
+)(implicit ME: UseCaseMonadError[F])
+    extends UseCaseInteractor[F, AuthorizationAuthorizeInput, AuthorizationAuthorizeOutput] {
 
-  override protected def dance(arg: AuthorizationAuthorizeInput): M[AuthorizationAuthorizeOutput] =
+  override protected def dance(arg: AuthorizationAuthorizeInput): F[AuthorizationAuthorizeOutput] =
     for {
       clientId <- ME.pure(ClientId(arg.clientId))
       client   <- clientRepository.resolveById(clientId)
@@ -35,7 +35,7 @@ class AuthorizationAuthorizeUseCase[M[_]](
           redirectUri = arg.redirectUri,
           scope = arg.scope,
           state = arg.state
-        ).toM[M]
+        ).toM[F]
       _ <- reservedAuthorizationRepository.store(reservedAuth)
     } yield
       AuthorizationAuthorizeOutput(

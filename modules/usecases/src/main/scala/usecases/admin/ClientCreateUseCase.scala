@@ -11,14 +11,14 @@ case class ClientCreateInput(name: Option[String], redirectUris: Seq[String], sc
 
 case class ClientCreateOutput(id: Long, secret: String)
 
-final class ClientCreateUseCase[M[_]](
-    override protected val outputBoundary: OutputBoundary[M, ClientCreateOutput],
-    private val clientIdGenerator: IdGenerator[M, ClientId],
-    private val clientRepository: ClientRepository[M]
-)(implicit ME: UseCaseMonadError[M])
-    extends UseCaseInteractor[M, ClientCreateInput, ClientCreateOutput] {
+final class ClientCreateUseCase[F[_]](
+    override protected val outputBoundary: OutputBoundary[F, ClientCreateOutput],
+    private val clientIdGenerator: IdGenerator[F, ClientId],
+    private val clientRepository: ClientRepository[F]
+)(implicit ME: UseCaseMonadError[F])
+    extends UseCaseInteractor[F, ClientCreateInput, ClientCreateOutput] {
 
-  override protected def dance(arg: ClientCreateInput): M[ClientCreateOutput] =
+  override protected def dance(arg: ClientCreateInput): F[ClientCreateOutput] =
     for {
       id <- clientIdGenerator.generateId
       client <- Client
@@ -28,7 +28,7 @@ final class ClientCreateUseCase[M[_]](
           secret = SecretGenerator.generate,
           redirectUris = arg.redirectUris,
           scopes = arg.scopes
-        ).toM[M]
+        ).toM[F]
       _ <- clientRepository.store(client)
     } yield
       ClientCreateOutput(

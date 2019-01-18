@@ -1,7 +1,7 @@
 package usecases
 
-trait OutputBoundary[M[_], OutputData] {
+trait OutputBoundary[F[_], OutputData] {
 
-  def onComplete(result: M[OutputData]): Unit
+  def onComplete(result: F[OutputData]): Unit
 
 }

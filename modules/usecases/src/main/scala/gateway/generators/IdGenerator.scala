@@ -1,7 +1,7 @@
 package gateway.generators
 
-trait IdGenerator[M[_], ID] {
+trait IdGenerator[F[_], ID] {
 
-  def generateId: M[ID]
+  def generateId: F[ID]
 
 }

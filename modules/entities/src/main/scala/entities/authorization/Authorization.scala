@@ -27,8 +27,8 @@ case class Authorization(id: AuthorizationId,
   override type IdType        = AuthorizationId
   override protected val tag: ClassTag[Authorization] = classTag[Authorization]
 
-  def generateToken[M[_]: Monad](accessTokenGenerator: AccessTokenGenerator[M],
-                                 refreshTokenGenerator: RefreshTokenGenerator[M]): M[(Authorization, Token)] =
+  def generateToken[F[_]: Monad](accessTokenGenerator: AccessTokenGenerator[F],
+                                 refreshTokenGenerator: RefreshTokenGenerator[F]): F[(Authorization, Token)] =
     for {
       accessToken  <- accessTokenGenerator.generate(this.scopes, this.clientId, this.accountId)
       refreshToken <- refreshTokenGenerator.generate
@@ -57,11 +57,11 @@ case class Authorization(id: AuthorizationId,
 
   class VerifiedAuthorization private[Authorization] (authorization: Authorization) {
 
-    def generateTokenByRefreshToken[M[_]](
-        accessTokenGenerator: AccessTokenGenerator[M],
+    def generateTokenByRefreshToken[F[_]](
+        accessTokenGenerator: AccessTokenGenerator[F],
         refreshToken: RefreshToken,
         scopes: Option[Seq[String]]
-    )(implicit ME: Monad[M]): M[EntitiesValidationResult[Token]] =
+    )(implicit ME: Monad[F]): F[EntitiesValidationResult[Token]] =
       Scopes.fromOptSeqString(scopes) match {
         case invalid @ Invalid(_) => ME.pure(invalid)
         case Valid(a) =>

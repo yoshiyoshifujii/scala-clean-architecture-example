@@ -16,12 +16,12 @@ case class ClientOutput(id: Long,
 
 case class ClientGetsOutput(clients: Seq[ClientOutput])
 
-final class ClientGetsUseCase[M[_]: Monad](
-    override protected val outputBoundary: OutputBoundary[M, ClientGetsOutput],
-    private val clientRepository: ClientRepository[M]
-) extends UseCaseInteractor[M, ClientGetsInput, ClientGetsOutput] {
+final class ClientGetsUseCase[F[_]: Monad](
+    override protected val outputBoundary: OutputBoundary[F, ClientGetsOutput],
+    private val clientRepository: ClientRepository[F]
+) extends UseCaseInteractor[F, ClientGetsInput, ClientGetsOutput] {
 
-  override protected def dance(arg: ClientGetsInput): M[ClientGetsOutput] =
+  override protected def dance(arg: ClientGetsInput): F[ClientGetsOutput] =
     clientRepository.resolveAll.map { aggregates =>
       ClientGetsOutput(aggregates.map { e =>
         ClientOutput(
