@@ -18,7 +18,7 @@ final class ClientCreateUseCase[M[_]](
 )(implicit ME: UseCaseMonadError[M])
     extends UseCaseInteractor[M, ClientCreateInput, ClientCreateOutput] {
 
-  override protected def call(arg: ClientCreateInput): M[ClientCreateOutput] =
+  override protected def dance(arg: ClientCreateInput): M[ClientCreateOutput] =
     for {
       id <- clientIdGenerator.generateId
       client <- Client

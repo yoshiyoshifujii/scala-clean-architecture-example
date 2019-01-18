@@ -4,8 +4,8 @@ trait UseCaseInteractor[M[_], InputData, OutputData] extends InputBoundary[Input
 
   protected val outputBoundary: OutputBoundary[M, OutputData]
 
-  override def execute(arg: InputData): Unit = outputBoundary.onComplete(call(arg))
+  override def execute(arg: InputData): Unit = outputBoundary.onComplete(dance(arg))
 
-  protected def call(arg: InputData): M[OutputData]
+  protected def dance(arg: InputData): M[OutputData]
 
 }

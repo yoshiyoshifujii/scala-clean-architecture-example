@@ -21,7 +21,7 @@ final class ClientGetsUseCase[M[_]: Monad](
     private val clientRepository: ClientRepository[M]
 ) extends UseCaseInteractor[M, ClientGetsInput, ClientGetsOutput] {
 
-  override protected def call(arg: ClientGetsInput): M[ClientGetsOutput] =
+  override protected def dance(arg: ClientGetsInput): M[ClientGetsOutput] =
     clientRepository.resolveAll.map { aggregates =>
       ClientGetsOutput(aggregates.map { e =>
         ClientOutput(

@@ -25,7 +25,7 @@ class AuthorizationAuthorizeUseCase[M[_]](
 )(implicit ME: UseCaseMonadError[M])
     extends UseCaseInteractor[M, AuthorizationAuthorizeInput, AuthorizationAuthorizeOutput] {
 
-  override protected def call(arg: AuthorizationAuthorizeInput): M[AuthorizationAuthorizeOutput] =
+  override protected def dance(arg: AuthorizationAuthorizeInput): M[AuthorizationAuthorizeOutput] =
     for {
       clientId <- ME.pure(ClientId(arg.clientId))
       client   <- clientRepository.resolveById(clientId)

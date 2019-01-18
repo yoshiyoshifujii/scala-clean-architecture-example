@@ -1,9 +1,8 @@
 package adapters.presenters
 
 import cats.data.NonEmptyList
-import cats.data.Validated.{ Invalid, Valid }
 import cats.syntax.either._
-import entities.{ EntitiesError, EntitiesValidationResult }
+import entities.EntitiesError
 import usecases.OutputBoundary
 
 import scala.concurrent.{ ExecutionContext, Future, Promise }
