@@ -1,13 +1,11 @@
 package usecases.admin
 
-import cats.MonadError
 import cats.implicits._
-import entities._
 import entities.client.{ Client, ClientId }
 import entities.secret.SecretGenerator
 import gateway.generators.IdGenerator
 import gateway.repositories.ClientRepository
-import usecases.{ OutputBoundary, UseCaseApplicationError, UseCaseError, UseCaseInteractor }
+import usecases._
 
 case class ClientCreateInput(name: Option[String], redirectUris: Seq[String], scopes: Seq[String])
 
@@ -17,29 +15,25 @@ final class ClientCreateUseCase[M[_]](
     override protected val outputBoundary: OutputBoundary[M, ClientCreateOutput],
     private val clientIdGenerator: IdGenerator[M, ClientId],
     private val clientRepository: ClientRepository[M]
-)(implicit ME: MonadError[M, UseCaseError])
+)(implicit ME: UseCaseMonadError[M])
     extends UseCaseInteractor[M, ClientCreateInput, ClientCreateOutput] {
 
-  override protected def call(arg: ClientCreateInput): M[EntitiesValidationResult[ClientCreateOutput]] =
+  override protected def call(arg: ClientCreateInput): M[ClientCreateOutput] =
     for {
       id <- clientIdGenerator.generateId
-      client = Client.create(
-        id,
-        name = arg.name,
-        secret = SecretGenerator.generate,
-        redirectUris = arg.redirectUris,
-        scopes = arg.scopes
-      )
-      _ <- client.fold(
-        a => ME.raiseError[Long](UseCaseApplicationError(a)),
-        clientRepository.store
-      )
+      client <- Client
+        .create(
+          id,
+          name = arg.name,
+          secret = SecretGenerator.generate,
+          redirectUris = arg.redirectUris,
+          scopes = arg.scopes
+        ).toM[M]
+      _ <- clientRepository.store(client)
     } yield
-      client.map { _client =>
-        ClientCreateOutput(
-          id = _client.id.value,
-          secret = _client.secret.value
-        )
-      }
+      ClientCreateOutput(
+        id = client.id.value,
+        secret = client.secret.value
+      )
 
 }

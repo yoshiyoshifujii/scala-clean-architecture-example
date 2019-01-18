@@ -1,7 +1,6 @@
 package usecases.authorization
 
 import cats.Monad
-import entities.EntitiesValidationResult
 import gateway.repositories.ClientRepository
 import usecases.{ OutputBoundary, UseCaseInteractor }
 
@@ -26,7 +25,7 @@ class AuthorizationAuthorizeUseCase[M[_]](
 
   override protected def call(
       arg: AuthorizationAuthorizeInput
-  ): M[EntitiesValidationResult[AuthorizationAuthorizeOutput]] = ???
+  ): M[AuthorizationAuthorizeOutput] = ???
 //    for {
 //      clientId <- ME.pure(ClientId(arg.clientId))
 //      client   <- clientRepository.resolveById(clientId)

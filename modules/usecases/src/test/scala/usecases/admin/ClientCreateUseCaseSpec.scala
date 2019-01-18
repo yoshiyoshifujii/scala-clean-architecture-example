@@ -2,9 +2,7 @@ package usecases.admin
 
 import cats._
 import cats.data.ReaderT
-import cats.data.Validated.{ Invalid, Valid }
 import cats.implicits._
-import entities.EntitiesValidationResult
 import entities.client.Client
 import gateway.generators.ClientIdGeneratorMock
 import gateway.repositories.{ ClientRepository, ClientRepositoryOnMemory }
@@ -36,11 +34,10 @@ class ClientCreateUseCaseSpec extends FreeSpec {
 
       private val _response: Promise[String] = Promise()
 
-      override def onComplete(result: ClientF[EntitiesValidationResult[ClientCreateOutput]]): Unit =
+      override def onComplete(result: ClientF[ClientCreateOutput]): Unit =
         result match {
-          case Success(Valid(value))   => _response.success(value.id.toString)
-          case Success(Invalid(value)) => _response.success(value.toString)
-          case Failure(cause)          => _response.failure(cause)
+          case Success(value) => _response.success(value.id.toString)
+          case Failure(cause) => _response.failure(cause)
         }
 
       def response: Future[String] = _response.future
@@ -157,11 +154,10 @@ class ClientCreateUseCaseSpec extends FreeSpec {
 
       private val _response: Promise[String] = Promise()
 
-      override def onComplete(result: ClientF[EntitiesValidationResult[ClientCreateOutput]]): Unit =
+      override def onComplete(result: ClientF[ClientCreateOutput]): Unit =
         result.onComplete({
-          case Success(Valid(value))   => _response.success(value.id.toString)
-          case Success(Invalid(value)) => _response.success(value.toString)
-          case Failure(cause)          => _response.failure(cause)
+          case Success(value) => _response.success(value.id.toString)
+          case Failure(cause) => _response.failure(cause)
         })
 
       def response: Future[String] = _response.future
@@ -224,12 +220,11 @@ class ClientCreateUseCaseSpec extends FreeSpec {
 
       private val _response: Promise[String] = Promise()
 
-      override def onComplete(result: ClientF[EntitiesValidationResult[ClientCreateOutput]]): Unit =
+      override def onComplete(result: ClientF[ClientCreateOutput]): Unit =
         result
           .run(context).onComplete({
-            case Success(Valid(value))   => _response.success(value.id.toString)
-            case Success(Invalid(value)) => _response.success(value.toString)
-            case Failure(cause)          => _response.failure(cause)
+            case Success(value) => _response.success(value.id.toString)
+            case Failure(cause) => _response.failure(cause)
           })
 
       def response: Future[String] = _response.future

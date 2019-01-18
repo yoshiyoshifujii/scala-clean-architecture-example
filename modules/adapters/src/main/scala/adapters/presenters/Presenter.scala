@@ -13,9 +13,9 @@ trait Presenter[OutputData] extends OutputBoundary[Future, OutputData] {
 
   implicit val executionContext: ExecutionContext
 
-  private val promise: Promise[EntitiesValidationResult[OutputData]] = Promise[EntitiesValidationResult[OutputData]]
+  private val promise: Promise[OutputData] = Promise[OutputData]
 
-  override def onComplete(result: Future[EntitiesValidationResult[OutputData]]): Unit =
+  override def onComplete(result: Future[OutputData]): Unit =
     result.onComplete({
       case Failure(cause) => promise.failure(cause)
       case Success(value) => promise.success(value)
@@ -29,9 +29,8 @@ trait Presenter[OutputData] extends OutputBoundary[Future, OutputData] {
   protected def convertError(result: NonEmptyList[EntitiesError]): ErrorResponse
 
   def response(): Future[Response] =
-    promise.future.map {
-      case Valid(value) => convert(value).asRight
-      case Invalid(ne)  => convertError(ne).asLeft
+    promise.future.map { value =>
+      convert(value).asRight
     }
 
 }

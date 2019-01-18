@@ -1,14 +1,12 @@
 package usecases.admin
 
-import cats.data.Validated.{ Invalid, Valid }
 import cats.implicits._
-import entities.EntitiesValidationResult
 import gateway.repositories.{ ClientRepository, ClientRepositoryOnMemory }
 import org.scalatest.FreeSpec
 import usecases.OutputBoundary
 
-import scala.concurrent.{ Await, Future, Promise }
 import scala.concurrent.duration._
+import scala.concurrent.{ Await, Future, Promise }
 import scala.util.{ Failure, Success, Try }
 
 class ClientGetsUseCaseSpec extends FreeSpec {
@@ -27,11 +25,10 @@ class ClientGetsUseCaseSpec extends FreeSpec {
 
       private val _response: Promise[Response] = Promise()
 
-      override def onComplete(result: ClientF[EntitiesValidationResult[ClientGetsOutput]]): Unit =
+      override def onComplete(result: ClientF[ClientGetsOutput]): Unit =
         result match {
-          case Success(Valid(value))   => _response.success(value.clients.map(_.toString).asRight)
-          case Success(Invalid(value)) => _response.success(value.toString.asLeft)
-          case Failure(cause)          => _response.failure(cause)
+          case Success(value) => _response.success(value.clients.map(_.toString).asRight)
+          case Failure(cause) => _response.failure(cause)
         }
 
       def response: Future[Response] = _response.future

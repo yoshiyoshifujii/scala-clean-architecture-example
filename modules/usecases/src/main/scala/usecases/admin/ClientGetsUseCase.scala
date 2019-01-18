@@ -2,7 +2,6 @@ package usecases.admin
 
 import cats.Monad
 import cats.implicits._
-import entities.EntitiesValidationResult
 import gateway.repositories.ClientRepository
 import usecases.{ OutputBoundary, UseCaseInteractor }
 
@@ -22,7 +21,7 @@ final class ClientGetsUseCase[M[_]: Monad](
     private val clientRepository: ClientRepository[M]
 ) extends UseCaseInteractor[M, ClientGetsInput, ClientGetsOutput] {
 
-  override protected def call(arg: ClientGetsInput): M[EntitiesValidationResult[ClientGetsOutput]] =
+  override protected def call(arg: ClientGetsInput): M[ClientGetsOutput] =
     clientRepository.resolveAll.map { aggregates =>
       ClientGetsOutput(aggregates.map { e =>
         ClientOutput(
@@ -33,7 +32,7 @@ final class ClientGetsUseCase[M[_]: Monad](
           createdAt = e.createdAt.toInstant.toEpochMilli,
           updatedAt = e.updatedAt.map(_.toInstant.toEpochMilli)
         )
-      }).validNel
+      })
     }
 
 }
