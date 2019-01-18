@@ -2,7 +2,7 @@ package usecases.authorization
 
 import cats.implicits._
 import entities.client.{ Client, ClientId }
-import entities.secret.Secret
+import entities.client.secret.Secret
 import gateway.generators.AuthorizationIdGeneratorMock
 import gateway.repositories.{
   AuthorizationCodeRepositoryOnMemory,

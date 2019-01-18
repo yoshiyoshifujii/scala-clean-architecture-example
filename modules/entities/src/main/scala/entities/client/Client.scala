@@ -7,11 +7,11 @@ import cats.implicits._
 import com.github.j5ik2o.dddbase.Aggregate
 import entities._
 import entities.redirecturi.RedirectUri
-import entities.refkey.RefKeyGenerator
+import entities.client.refkey.RefKeyGenerator
 import entities.reservedauthorization.{ ReservedAuthorization, ReservedAuthorizationId }
-import entities.responsetype.ResponseType
+import entities.reservedauthorization.responsetype.ResponseType
 import entities.scope.Scopes
-import entities.secret.Secret
+import entities.client.secret.Secret
 import entities.state.State
 import entities.status.Status
 

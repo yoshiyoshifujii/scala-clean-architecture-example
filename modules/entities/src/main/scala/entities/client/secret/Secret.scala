@@ -1,3 +1,3 @@
-package entities.secret
+package entities.client.secret
 
 case class Secret(value: String)

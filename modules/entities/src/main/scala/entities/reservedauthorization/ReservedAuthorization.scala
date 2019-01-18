@@ -8,7 +8,7 @@ import entities.authorization.{ Authorization, AuthorizationId }
 import entities.authorizationcode.{ AuthorizationCode, AuthorizationCodeValueGenerator }
 import entities.client.ClientId
 import entities.redirecturi.RedirectUri
-import entities.responsetype.ResponseType
+import entities.reservedauthorization.responsetype.ResponseType
 import entities.scope.Scopes
 import entities.state.State
 import entities.status.Status

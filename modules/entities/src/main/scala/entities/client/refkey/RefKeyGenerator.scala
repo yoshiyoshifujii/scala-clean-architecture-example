@@ -1,4 +1,4 @@
-package entities.refkey
+package entities.client.refkey
 
 import infrastructure.token.TokenGenerator
 

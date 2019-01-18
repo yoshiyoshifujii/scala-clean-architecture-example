@@ -1,4 +1,4 @@
-package entities.secret
+package entities.client.secret
 
 import org.passay.{ CharacterRule, EnglishCharacterData, PasswordGenerator }
 

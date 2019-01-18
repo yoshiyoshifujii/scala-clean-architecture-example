@@ -1,4 +1,4 @@
-package entities.responsetype
+package entities.reservedauthorization.responsetype
 
 import entities.EnumWithValidation
 import enumeratum._

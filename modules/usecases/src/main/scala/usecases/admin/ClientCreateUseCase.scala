@@ -2,7 +2,7 @@ package usecases.admin
 
 import cats.implicits._
 import entities.client.{ Client, ClientId }
-import entities.secret.SecretGenerator
+import entities.client.secret.SecretGenerator
 import gateway.generators.IdGenerator
 import gateway.repositories.ClientRepository
 import usecases._
