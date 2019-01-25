@@ -16,7 +16,9 @@ lazy val `entities` = (project in file("modules/entities"))
   .settings(
     name := s"$baseName-entities",
     libraryDependencies ++= Seq(
-      ScalaDDDBase.core
+      ScalaDDDBase.core,
+      TypeLevel.core,
+      TypeLevel.free
     )
   )
   .settings(coreSettings)
@@ -32,7 +34,11 @@ lazy val `usecases` = (project in file("modules/usecases"))
 lazy val `adapters` = (project in file("modules/adapters"))
   .settings(
     name := s"$baseName-adapters",
-    libraryDependencies ++= Seq()
+    libraryDependencies ++= Seq(
+      AkkaHttp.http,
+      Akka.stream,
+      Heikoseeberger.circe
+    )
   )
   .settings(coreSettings)
   .dependsOn(usecases)
