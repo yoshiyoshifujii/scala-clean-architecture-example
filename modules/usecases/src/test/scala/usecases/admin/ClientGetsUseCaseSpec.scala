@@ -11,12 +11,14 @@ import scala.util.{ Failure, Success, Try }
 
 class ClientGetsUseCaseSpec extends FreeSpec {
 
+  import usecases.SampleErrors._
+
   "pattern Try" in {
 
     type ClientF[A] = Try[A]
 
     val clientRepository: ClientRepository[ClientF] =
-      new ClientRepositoryOnMemory[ClientF]()
+      new ClientRepositoryOnMemory[ClientF, Throwable]()
 
     val input = ClientGetsInput()
 

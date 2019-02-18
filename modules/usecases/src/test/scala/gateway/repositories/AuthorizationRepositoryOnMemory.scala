@@ -4,7 +4,7 @@ import entities.authorization.{ Authorization, AuthorizationId }
 import entities.status.Status
 import entities.token.RefreshToken
 
-class AuthorizationRepositoryOnMemory[F[_]](implicit ME: MonadError[F, Throwable]) extends AuthorizationRepository[F] {
+class AuthorizationRepositoryOnMemory[F[_], E](implicit ME: MonadError[F, E]) extends AuthorizationRepository[F] {
 
   private val map: scala.collection.mutable.Map[AuthorizationId, Authorization] = scala.collection.mutable.Map.empty
 
@@ -17,7 +17,7 @@ class AuthorizationRepositoryOnMemory[F[_]](implicit ME: MonadError[F, Throwable
       }.getOrElse(ME.pure(0L))
 
   override def resolveById(id: AuthorizationId): F[Authorization] =
-    map.get(id).map(ME.pure).getOrElse(ME.raiseError(new RuntimeException("Not Found.")))
+    map.get(id).map(ME.pure).get
 
   override def softDeleteMulti(ids: Seq[AuthorizationId]): F[Long] = ???
 

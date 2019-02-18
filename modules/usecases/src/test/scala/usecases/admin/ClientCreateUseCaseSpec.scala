@@ -14,16 +14,16 @@ import scala.util.{ Failure, Success, Try }
 
 class ClientCreateUseCaseSpec extends FreeSpec {
 
-  import usecases.Errors._
+  import usecases.SampleErrors._
 
   "pattern Try" - {
 
     type ClientF[A] = Try[A]
 
     val clientRepository: ClientRepository[ClientF] =
-      new ClientRepositoryOnMemory[ClientF]()
+      new ClientRepositoryOnMemory[ClientF, Throwable]()
 
-    val clientIdGenerator = new ClientIdGeneratorMock[ClientF]()
+    val clientIdGenerator = new ClientIdGeneratorMock[ClientF, Throwable]()
 
     val input = ClientCreateInput(
       name = Some("hoge"),
@@ -68,7 +68,7 @@ class ClientCreateUseCaseSpec extends FreeSpec {
 
     "throw exception" in {
       val clientRepository2: ClientRepository[ClientF] =
-        new ClientRepositoryOnMemory[ClientF]() {
+        new ClientRepositoryOnMemory[ClientF, Throwable]() {
           override def store(aggregate: Client): ClientF[Long] = Failure(new RuntimeException("hoge"))
         }
       val output = new SamplePresenter
@@ -124,9 +124,9 @@ class ClientCreateUseCaseSpec extends FreeSpec {
     implicit val ec: ExecutionContext = ExecutionContext.global
 
     val clientRepository: ClientRepository[ClientF] =
-      new ClientRepositoryOnMemory[ClientF]()
+      new ClientRepositoryOnMemory[ClientF, Throwable]()
 
-    val clientIdGenerator = new ClientIdGeneratorMock[ClientF]()
+    val clientIdGenerator = new ClientIdGeneratorMock[ClientF, Throwable]()
 
     val input = ClientCreateInput(
       name = Some("hoge"),
@@ -173,9 +173,9 @@ class ClientCreateUseCaseSpec extends FreeSpec {
     implicit val ec: ExecutionContext = ExecutionContext.global
 
     val clientRepository: ClientRepository[ClientF] =
-      new ClientRepositoryOnMemory[ClientF]()
+      new ClientRepositoryOnMemory[ClientF, Throwable]()
 
-    val clientIdGenerator = new ClientIdGeneratorMock[ClientF]()
+    val clientIdGenerator = new ClientIdGeneratorMock[ClientF, Throwable]()
 
     val input = ClientCreateInput(
       name = Some("hoge"),

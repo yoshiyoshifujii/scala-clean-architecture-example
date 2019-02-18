@@ -1,9 +1,8 @@
 package usecases.admin
 
-import cats.Monad
 import cats.implicits._
 import gateway.repositories.ClientRepository
-import usecases.{ OutputBoundary, UseCaseInteractor }
+import usecases.{ OutputBoundary, UseCaseInteractor, UseCaseMonadError }
 
 case class ClientGetsInput()
 
@@ -16,10 +15,11 @@ case class ClientOutput(id: Long,
 
 case class ClientGetsOutput(clients: Seq[ClientOutput])
 
-final class ClientGetsUseCase[F[_]: Monad](
+final class ClientGetsUseCase[F[_]](
     override protected val outputBoundary: OutputBoundary[F, ClientGetsOutput],
     private val clientRepository: ClientRepository[F]
-) extends UseCaseInteractor[F, ClientGetsInput, ClientGetsOutput] {
+)(implicit ME: UseCaseMonadError[F])
+    extends UseCaseInteractor[F, ClientGetsInput, ClientGetsOutput] {
 
   override protected def dance(arg: ClientGetsInput): F[ClientGetsOutput] =
     clientRepository.resolveAll.map { aggregates =>

@@ -6,7 +6,7 @@ import cats.{ MonadError, StackSafeMonad }
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.{ Failure, Success, Try }
 
-object Errors {
+object SampleErrors {
 
   implicit val useCaseMonadErrorForTry: MonadError[Try, UseCaseError] =
     new MonadError[Try, UseCaseError] with StackSafeMonad[Try] {

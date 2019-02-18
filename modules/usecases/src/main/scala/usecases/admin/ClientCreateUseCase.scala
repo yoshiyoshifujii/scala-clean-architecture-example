@@ -13,8 +13,8 @@ case class ClientCreateOutput(id: Long, secret: String)
 
 final class ClientCreateUseCase[F[_]](
     override protected val outputBoundary: OutputBoundary[F, ClientCreateOutput],
-    private val clientIdGenerator: IdGenerator[F, ClientId],
-    private val clientRepository: ClientRepository[F]
+    protected val clientIdGenerator: IdGenerator[F, ClientId],
+    protected val clientRepository: ClientRepository[F]
 )(implicit ME: UseCaseMonadError[F])
     extends UseCaseInteractor[F, ClientCreateInput, ClientCreateOutput] {
 

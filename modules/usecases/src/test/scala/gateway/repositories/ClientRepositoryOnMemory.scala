@@ -4,7 +4,7 @@ import cats.MonadError
 import entities.client.{ Client, ClientId }
 import entities.status.Status
 
-class ClientRepositoryOnMemory[F[_]](implicit ME: MonadError[F, Throwable]) extends ClientRepository[F] {
+class ClientRepositoryOnMemory[F[_], E](implicit ME: MonadError[F, E]) extends ClientRepository[F] {
 
   private val map: scala.collection.mutable.Map[ClientId, Client] = scala.collection.mutable.Map.empty
 
@@ -21,7 +21,7 @@ class ClientRepositoryOnMemory[F[_]](implicit ME: MonadError[F, Throwable]) exte
     ME.pure(map.values.toSeq)
 
   override def resolveById(id: ClientId): F[Client] =
-    map.get(id).map(ME.pure).getOrElse(ME.raiseError(new RuntimeException("Not Found.")))
+    map.get(id).map(ME.pure).get
 
   override def softDelete(id: ClientId): F[Long] = {
     map

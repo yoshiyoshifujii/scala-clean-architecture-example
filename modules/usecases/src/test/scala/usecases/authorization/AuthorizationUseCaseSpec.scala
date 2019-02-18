@@ -19,7 +19,7 @@ import scala.util.{ Failure, Success, Try }
 
 class AuthorizationUseCaseSpec extends FreeSpec {
 
-  import usecases.Errors._
+  import usecases.SampleErrors._
 
   "pattern Try" - {
 
@@ -27,11 +27,11 @@ class AuthorizationUseCaseSpec extends FreeSpec {
 
       type AuthF[A] = Try[A]
 
-      val clientRepository                = new ClientRepositoryOnMemory[AuthF]
-      val reservedAuthorizationRepository = new ReservedAuthorizationRepositoryOnMemory[AuthF]
-      val authorizationIdGenerator        = new AuthorizationIdGeneratorMock[AuthF]
-      val authorizationCodeRepository     = new AuthorizationCodeRepositoryOnMemory[AuthF]
-      val authorizationRepository         = new AuthorizationRepositoryOnMemory[AuthF]
+      val clientRepository                = new ClientRepositoryOnMemory[AuthF, Throwable]
+      val reservedAuthorizationRepository = new ReservedAuthorizationRepositoryOnMemory[AuthF, Throwable]
+      val authorizationIdGenerator        = new AuthorizationIdGeneratorMock[AuthF, Throwable]
+      val authorizationCodeRepository     = new AuthorizationCodeRepositoryOnMemory[AuthF, Throwable]
+      val authorizationRepository         = new AuthorizationRepositoryOnMemory[AuthF, Throwable]
 
       class PresenterSpec[A] extends OutputBoundary[AuthF, A] {
         private val _response: Promise[A] = Promise()

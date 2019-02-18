@@ -2,7 +2,7 @@ package gateway.repositories
 import cats.MonadError
 import entities.authorizationcode.{ AuthorizationCode, AuthorizationCodeValue }
 
-class AuthorizationCodeRepositoryOnMemory[F[_]](implicit ME: MonadError[F, Throwable])
+class AuthorizationCodeRepositoryOnMemory[F[_], E](implicit ME: MonadError[F, E])
     extends AuthorizationCodeRepository[F] {
 
   private val map: scala.collection.mutable.Map[AuthorizationCodeValue, AuthorizationCode] =
@@ -17,5 +17,5 @@ class AuthorizationCodeRepositoryOnMemory[F[_]](implicit ME: MonadError[F, Throw
   }
 
   override def resolveById(id: AuthorizationCodeValue): F[AuthorizationCode] =
-    map.get(id).map(ME.pure).getOrElse(ME.raiseError(new RuntimeException("Not Found.")))
+    map.get(id).map(ME.pure).get
 }
